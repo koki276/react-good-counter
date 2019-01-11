@@ -2,6 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 class LikeButton extends React.Component {
+    constructor(props) {
+        super(props);
+        // コンポーネントにカーソルが乗っているかどうかの状態
+        this.state = {
+            hovered: false,
+            count: 999, //カウント数
+            liked: false //いいねしたかどうか
+        }
+    }
     styles () {
         return {
             container: {
@@ -20,18 +29,7 @@ class LikeButton extends React.Component {
                 lineHeight: "20px"
             },
             likeHover: {
-                display: "block",
-                float: "left",
-                width: 6,
-                height: 6,
-                background: "#fafafa",
-                marginLeft: "-12px",
-                borderRight: 10,
-                transform: "rotate(45deg)",
-                WebkitTransform: "rotate(45deg)",
-                marginTop: 6,
-                borderLeft: "1px solid #aaa",
-                borderBottom: "1px solid #aaa"
+                background: "#444"
             },
             counterBefore: {
                 display: "block",
@@ -61,12 +59,32 @@ class LikeButton extends React.Component {
             }
         };
     }
+    onMouseEnter() {
+        this.setState({hovered: true});
+    }
+    onMouseLeave() {
+        this.setState({hovered: false});
+    }
+    onClick() {
+        this.setState({
+            count: this.state.count + (this.state.liked ? -1 : 1),
+            liked: !this.state.liked
+        });
+    }
     render () {
+        const styles = this.styles();
+        // 状態に応じてスタイルを変更する
+        const likeStyle = this.state.hovered ? {...styles.like, ...styles.likeHover} : styles.like;
+        console.log(this.state);
         return (
             <span style={styles.container}>
-                <span style={styles.like}>いいね！</span>
+                <span 
+                    style={likeStyle}
+                    onMouseEnter={this.onMouseEnter.bind(this)}
+                    onMouseLeave={this.onMouseLeave.bind(this)}
+                    onClick={this.onClick.bind(this)}>{this.state.liked ? "✔︎" : ""}いいね！</span>
                 <span style={styles.counter}>
-                    <span style={styles.counterBefore}>{" "}</span>999
+                    <span style={styles.counterBefore}>{" "}</span>{this.state.count}
                 </span>
             </span>
         );
